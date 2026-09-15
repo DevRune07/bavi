@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bavi Vilvoorde | Basketbal sinds 1942</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+  :root{--bg:#080808;--bg2:#121212;--text:#f0f0f0;--text2:#bbb;--accent:#ff6b00;--border:#2a2a2a;--card:#161616}
+  [data-theme="light"]{--bg:#f4f4f4;--bg2:#fff;--text:#111;--text2:#444;--accent:#e55a00;--border:#e0e0e0;--card:#fff}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.65;transition:background .4s,color .4s;overflow-x:hidden}
+  a{color:var(--accent);text-decoration:none;transition:.25s}
+  header{position:fixed;top:0;width:100%;background:rgba(8,8,8,.92);backdrop-filter:blur(16px);z-index:100;padding:.7rem 2rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}
+  [data-theme="light"] header{background:rgba(255,255,255,.92)}
+  .logo-wrap{display:flex;align-items:center;gap:.7rem}
+  .logo-wrap img{width:48px;height:48px;border-radius:50%;object-fit:cover}
+  .logo{font-size:1.5rem;font-weight:800;color:var(--accent)}
+  nav{display:flex;align-items:center;gap:1.3rem}
+  nav a{font-weight:600;font-size:.9rem;color:var(--text2);position:relative}
+  nav a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:var(--accent);transition:.3s}
+  nav a:hover::after{width:100%}
+  .theme-btn{background:var(--card);border:1px solid var(--border);color:var(--text);padding:.5rem 1rem;border-radius:30px;cursor:pointer;font-weight:600}
+
+  #loader{position:fixed;inset:0;background:#080808;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .5s,visibility .5s}
+  #loader.hide{opacity:0;visibility:hidden}
+  .loader-ball{width:70px;height:70px;background:linear-gradient(135deg,#ff6b00,#ff9500);border-radius:50%;animation:bounceSpin 1.1s ease-in-out infinite;box-shadow:0 0 40px rgba(255,107,0,.6)}
+  .loader-text{margin-top:1.8rem;color:#ff6b00;font-weight:800;letter-spacing:3px}
+
+  .rolling-logo{position:fixed;left:-120px;top:40%;width:90px;height:90px;z-index:50;opacity:0;pointer-events:none}
+  .rolling-logo img{width:100%;height:100%;border-radius:50%;box-shadow:0 8px 25px rgba(0,0,0,.4)}
+  .rolling-logo.animate{animation:rollDown 4.5s cubic-bezier(.25,.1,.25,1) forwards}
+
+  .hero{min-height:100vh;position:relative;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden;padding:7rem 1.5rem 5rem}
+  .hero-bg{position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=1920') center/cover;animation:slowZoom 20s ease-in-out infinite alternate}
+  .hero-overlay{position:absolute;inset:0;background:linear-gradient(160deg,rgba(0,0,0,.55),rgba(255,107,0,.12),rgba(0,0,0,.85))}
+  .hero-content{position:relative;z-index:2;max-width:920px}
+  .hero .tagline{display:inline-block;background:rgba(255,107,0,.2);border:1px solid rgba(255,107,0,.5);color:#ff9500;font-weight:700;padding:.4rem 1.2rem;border-radius:30px;margin-bottom:1.2rem;animation:fadeUp .8s ease}
+  .hero h1{font-size:clamp(3.2rem,10vw,6.8rem);font-weight:800;color:#fff;margin-bottom:.5rem;animation:fadeUp .9s ease .1s both}
+  .hero p{font-size:1.2rem;max-width:580px;margin:0 auto 2.4rem;color:#eee;animation:fadeUp .9s ease .25s both}
+  .btn{display:inline-block;padding:1.25rem 2.8rem;background:linear-gradient(135deg,#ff6b00,#ff8c00);color:#fff;font-weight:800;border-radius:50px;box-shadow:0 10px 35px rgba(255,107,0,.45);transition:.35s;animation:fadeUp .9s ease .4s both}
+  .btn:hover{transform:translateY(-4px) scale(1.03)}
+
+  .bg-shape{position:fixed;border-radius:50%;filter:blur(80px);opacity:.12;z-index:0;pointer-events:none;animation:float 12s ease-in-out infinite}
+  .shape1{width:400px;height:400px;background:#ff6b00;top:10%;left:-100px}
+  .shape2{width:300px;height:300px;background:#ff9500;bottom:15%;right:-80px;animation-delay:3s}
+  .shape3{width:250px;height:250px;background:#ff6b00;top:50%;left:40%;animation-delay:6s}
+
+  section{padding:5.5rem 2rem;max-width:1100px;margin:0 auto;position:relative;z-index:1}
+  h2{font-size:2.5rem;color:var(--accent);margin-bottom:1.5rem;font-weight:800}
+  h2::after{content:'';display:block;width:60px;height:5px;background:linear-gradient(90deg,#ff6b00,#ff9500);margin-top:.6rem;border-radius:3px}
+  .lead{font-size:1.15rem;color:var(--text2);margin-bottom:2.2rem}
+
+  .news-item,.sponsor-card,.team-card,.stat{background:var(--card);border:1px solid var(--border);border-radius:18px;transition:all .35s cubic-bezier(.2,.8,.2,1)}
+  .news-item{padding:1.7rem;margin-bottom:1.4rem;cursor:pointer;position:relative;overflow:hidden}
+  .news-item::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:linear-gradient(#ff6b00,#ff9500);opacity:0;transition:.35s}
+  .news-item:hover{border-color:rgba(255,107,0,.5);transform:translateY(-7px);box-shadow:0 18px 40px rgba(255,107,0,.12)}
+  .news-item:hover::before{opacity:1}
+  .news-item h3{color:var(--accent);margin-bottom:.7rem;font-size:1.25rem;font-weight:700}
+  .news-item p{color:var(--text2)}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1.3rem;margin:2.8rem 0;text-align:center}
+  .stat{padding:1.8rem 1rem}
+  .stat:hover{border-color:var(--accent);transform:translateY(-6px)}
+  .stat strong{display:block;font-size:2.3rem;background:linear-gradient(135deg,#ff6b00,#ff9500);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800}
+  .stat span{font-size:.9rem;color:var(--text2)}
+
+  .team-grid,.sponsor-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1.3rem}
+  .team-card,.sponsor-card{padding:1.7rem 1.3rem;text-align:center;cursor:pointer}
+  .team-card:hover,.sponsor-card:hover{border-color:var(--accent);transform:translateY(-10px) scale(1.04);box-shadow:0 16px 35px rgba(255,107,0,.2)}
+  .team-card h4,.sponsor-card h4{color:var(--accent);margin-bottom:.4rem;font-weight:700}
+  .team-card p,.sponsor-card p{color:var(--text2);font-size:.9rem}
+  .sponsor-card img{max-width:110px;max-height:48px;object-fit:contain;margin-bottom:1rem;filter:grayscale(40%);transition:.4s}
+  .sponsor-card:hover img{filter:grayscale(0%);transform:scale(1.12)}
+
+  .reveal{opacity:0;transform:translateY(40px);transition:all .7s cubic-bezier(.2,.8,.2,1)}
+  .reveal.active{opacity:1;transform:translateY(0)}
+
+  footer{background:var(--bg2);padding:4rem 2rem;text-align:center;border-top:1px solid var(--border);position:relative;z-index:1}
+  .test-note{margin-top:2rem;padding-top:1.3rem;border-top:1px solid var(--border);font-size:.85rem;color:#666}
+  .page{display:none;animation:fadeIn .45s ease}
+  .page.active{display:block}
+
+  @keyframes slowZoom{from{transform:scale(1)}to{transform:scale(1.12)}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes bounceSpin{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-45px) rotate(180deg)}}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-40px)}}
+  @keyframes rollDown{0%{left:-120px;top:35%;opacity:0;transform:rotate(0deg)}10%{opacity:1}100%{left:30px;top:calc(100vh - 140px);opacity:1;transform:rotate(720deg)}}
+  @media(max-width:900px){.stats{grid-template-columns:repeat(2,1fr)}nav a{display:none}.bg-shape,.rolling-logo{display:none}}
+</style>
+</head>
+<body>
+
+<div id="loader">
+  <div class="loader-ball"></div>
+  <div class="loader-text">BAVI VILVOORDE</div>
+</div>
+
+<div class="rolling-logo" id="rollingLogo">
+  <img src="logo.jpg" alt="Bavi Logo">
+</div>
+
+<div class="bg-shape shape1"></div>
+<div class="bg-shape shape2"></div>
+<div class="bg-shape shape3"></div>
+
+<header>
+  <div class="logo-wrap">
+    <img src="logo.jpg" alt="Bavi Logo">
+    <div class="logo">BAVI VILVOORDE</div>
+  </div>
+  <nav>
+    <a href="#" onclick="showPage('home')">Home</a>
+    <a href="#" onclick="showPage('nieuws')">Nieuws</a>
+    <a href="#" onclick="showPage('teams')">Teams</a>
+    <a href="#" onclick="showPage('sponsors')">Sponsors</a>
+    <a href="#" onclick="showPage('club')">Club</a>
+    <a href="#" onclick="showPage('historiek')">Historiek</a>
+    <a href="#" onclick="showPage('contact')">Contact</a>
+    <button class="theme-btn" onclick="toggleTheme()">☾ / ☀</button>
+  </nav>
+</header>
+
+<div id="home" class="page active">
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="tagline">Sinds 1942</div>
+    <h1>BAVI VILVOORDE</h1>
+    <p>De Vilvoordse traditieclub. Top Division 1. 4 senioren- en 12 jeugdploegen.</p>
+    <a href="https://app.twizzit.com/go/BAVI-Abo-2026-2027" class="btn">Abonnement 2026-27 →</a>
+  </div>
+</section>
+<section>
+  <h2 class="reveal">Welkom bij BAVI</h2>
+  <p class="lead reveal">Gesticht in 1942. Ambitie, jeugdwerking en pure basketpassie.</p>
+  <div class="stats">
+    <div class="stat reveal"><strong>1942</strong><span>Opgericht</span></div>
+    <div class="stat reveal"><strong>4</strong><span>Seniorenploegen</span></div>
+    <div class="stat reveal"><strong>12</strong><span>Jeugdploegen</span></div>
+    <div class="stat reveal"><strong>TDM1</strong><span>Niveau BAVI 1</span></div>
+  </div>
+</section>
+</div>
+
+<div id="nieuws" class="page">
+<section>
+  <h2 class="reveal">Nieuws</h2>
+  <div class="news-item reveal"><h3>Abonnement 2026-2027</h3><p>Toegang tot BAVI 1 & 2. €120. <a href="https://app.twizzit.com/go/BAVI-Abo-2026-2027">Bestel via Twizzit</a></p></div>
+  <div class="news-item reveal"><h3>Coaches gezocht</h3><p><a href="https://app.twizzit.com/go/BAVI-coach-worden">Meld je aan</a></p></div>
+  <div class="news-item reveal"><h3>UiTPAS korting</h3><p>80% korting. Mail <a href="mailto:bavi.vilvoorde@gmail.com">bavi.vilvoorde@gmail.com</a></p></div>
+  <div class="news-item reveal"><h3>Steun via Trooper</h3><p><a href="http://www.trooper.be/bavivilvoorde">trooper.be/bavivilvoorde</a></p></div>
+</section>
+</div>
+
+<div id="teams" class="page">
+<section>
+  <h2 class="reveal">Teams</h2>
+  <h3 style="color:var(--accent);margin:1.8rem 0 1.1rem" class="reveal">Senioren</h3>
+  <div class="team-grid">
+    <div class="team-card reveal"><h4>BAVI 1</h4><p>Top Division Men 1</p></div>
+    <div class="team-card reveal"><h4>BAVI 2</h4><p>1e Landelijke</p></div>
+    <div class="team-card reveal"><h4>BAVI 3</h4><p>1e Provinciale</p></div>
+    <div class="team-card reveal"><h4>BAVI 4</h4><p>2e Provinciale</p></div>
+    <div class="team-card reveal"><h4>BAVI 5</h4><p>2e Provinciale</p></div>
+  </div>
+  <h3 style="color:var(--accent);margin:2.8rem 0 1.1rem" class="reveal">Jeugd</h3>
+  <div class="team-grid">
+    <div class="team-card reveal"><h4>G08A</h4><p>U8</p></div>
+    <div class="team-card reveal"><h4>G10A</h4><p>U10</p></div>
+    <div class="team-card reveal"><h4>G10B</h4><p>U10</p></div>
+    <div class="team-card reveal"><h4>G12A</h4><p>U12</p></div>
+    <div class="team-card reveal"><h4>G12B</h4><p>U12</p></div>
+    <div class="team-card reveal"><h4>G12C</h4><p>U12</p></div>
+    <div class="team-card reveal"><h4>G14A</h4><p>U14</p></div>
+    <div class="team-card reveal"><h4>G14B</h4><p>U14</p></div>
+    <div class="team-card reveal"><h4>G14C</h4><p>U14</p></div>
+    <div class="team-card reveal"><h4>G14D</h4><p>U14</p></div>
+    <div class="team-card reveal"><h4>J16A</h4><p>U16</p></div>
+    <div class="team-card reveal"><h4>J16B</h4><p>U16</p></div>
+    <div class="team-card reveal"><h4>J16C</h4><p>U16</p></div>
+    <div class="team-card reveal"><h4>J18A</h4><p>U18</p></div>
+    <div class="team-card reveal"><h4>J18B</h4><p>U18</p></div>
+    <div class="team-card reveal"><h4>J18C</h4><p>U18</p></div>
+    <div class="team-card reveal"><h4>J21A</h4><p>U21</p></div>
+    <div class="team-card reveal"><h4>J21B</h4><p>U21</p></div>
+  </div>
+</section>
+</div>
+
+<div id="sponsors" class="page">
+<section>
+  <h2 class="reveal">Sponsors</h2>
+  <p class="lead reveal">Bedankt aan al onze partners.</p>
+  <div class="sponsor-grid">
+    <div class="sponsor-card reveal">
+      <img src="trooper.png" alt="Trooper">
+      <h4>Trooper</h4>
+      <p>Online steun</p>
+    </div>
+    <div class="sponsor-card reveal">
+      <img src="vilvoorde.jpg" alt="Stad Vilvoorde">
+      <h4>Stad Vilvoorde</h4>
+      <p>UiTPAS</p>
+    </div>
+    <div class="sponsor-card reveal">
+      <img src="https://logo.clearbit.com/nike.com" alt="Nike">
+      <h4>Nike</h4>
+      <p>Teamwear</p>
+    </div>
+    <div class="sponsor-card reveal">
+      <img src="https://logo.clearbit.com/twizzit.com" alt="Twizzit">
+      <h4>Twizzit</h4>
+      <p>Platform</p>
+    </div>
+    <div class="sponsor-card reveal">
+      <img src="https://logo.clearbit.com/bol.com" alt="Bol.com">
+      <h4>Bol.com</h4>
+      <p>Via Trooper</p>
+    </div>
+    <div class="sponsor-card reveal">
+      <img src="https://logo.clearbit.com/coolblue.be" alt="Coolblue">
+      <h4>Coolblue</h4>
+      <p>Via Trooper</p>
+    </div>
+  </div>
+</section>
+</div>
+
+<div id="club" class="page">
+<section>
+  <h2 class="reveal">Over de club</h2>
+  <p class="lead reveal">Gesticht in 1942. Focus op jeugd en ambitie. 4 senioren- en 12 jeugdploegen.</p>
+  <div class="stats">
+    <div class="stat reveal"><strong>1942</strong><span>Opgericht</span></div>
+    <div class="stat reveal"><strong>4</strong><span>Senioren</span></div>
+    <div class="stat reveal"><strong>12</strong><span>Jeugdploegen</span></div>
+    <div class="stat reveal"><strong>TDM1</strong><span>BAVI 1</span></div>
+  </div>
+</section>
+</div>
+
+<div id="historiek" class="page">
+<section>
+  <h2 class="reveal">Historiek</h2>
+  <div class="news-item reveal"><h3>1942 – Start</h3><p>Opgericht door studenten Atheneum.</p></div>
+  <div class="news-item reveal"><h3>1975 – Hoogtepunt</h3><p>3de in 1ste nationale.</p></div>
+  <div class="news-item reveal"><h3>2006 – Herstart</h3><p>Nieuw stamnummer + 5 promoties.</p></div>
+  <div class="news-item reveal"><h3>2025-26 – Promotie TDM1</h3><p>Play-offs gewonnen. Coach Pieter Pas.</p></div>
+</section>
+</div>
+
+<div id="contact" class="page">
+<section>
+  <h2 class="reveal">Contact</h2>
+  <div class="news-item reveal"><h3>Adres</h3><p>Slachthuisstraat<br>1800 Vilvoorde</p></div>
+  <div class="news-item reveal"><h3>E-mail</h3><p><a href="mailto:bavi.vilvoorde@gmail.com">bavi.vilvoorde@gmail.com</a></p></div>
+  <div class="news-item reveal"><h3>Social</h3><p><a href="https://www.facebook.com/BasketballVilvoorde/">Facebook</a> · <a href="https://instagram.com/bavi.vilvoorde">Instagram</a> · <a href="https://app.twizzit.com/v2/login">Twizzit</a></p></div>
+</section>
+</div>
+
+<footer>
+  <p>© Bavi Vilvoorde • Sinds 1942</p>
+  <p style="font-size:.95rem;margin-top:.5rem">Oranje & blauw • Let’s go BAVI!</p>
+  <div class="test-note">Dit is een testpagina van Rune Development. Alle rechten voorbehouden.</div>
+</footer>
+
+<script>
+window.addEventListener('load', () => {
+  setTimeout(() => document.getElementById('loader').classList.add('hide'), 1300);
+  setTimeout(() => document.getElementById('rollingLogo').classList.add('animate'), 10000);
+});
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+  setTimeout(reveal, 50);
+}
+function toggleTheme(){
+  const h = document.documentElement;
+  h.setAttribute('data-theme', h.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
+}
+function reveal(){
+  document.querySelectorAll('.reveal').forEach(el => {
+    if(el.getBoundingClientRect().top < window.innerHeight - 60) el.classList.add('active');
+  });
+}
+window.addEventListener('scroll', reveal);
+window.addEventListener('load', reveal);
+</script>
+</body>
+</html>
